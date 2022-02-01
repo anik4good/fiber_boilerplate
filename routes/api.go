@@ -20,6 +20,12 @@ func SetUpRoutes(app *fiber.App) {
 	// app.Post("/book", Controller.AddBook)
 	// app.Put("/book", Controller.Update)
 	// app.Delete("/book", Controller.Delete)
+
+
+
+	smsc := api.Group("/smsc")
+
+	smsc.Get("/sendmsg", Controller.SmsApi)
 }
 
 // func RegisterAPI(api fiber.Router) {

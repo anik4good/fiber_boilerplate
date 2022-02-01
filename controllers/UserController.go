@@ -5,6 +5,8 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
+	//"strings"
+	"time"
 
 	Configuration "github.com/anik4good/fiber_boilerplate/config"
 	"github.com/anik4good/fiber_boilerplate/models"
@@ -50,4 +52,18 @@ func AddUser(c *fiber.Ctx) error {
 	Configuration.GormDBConn.Create(&user)
 	log.Println("User Created successfully")
 	return c.Status(200).JSON(user)
+}
+
+func SmsApi(c *fiber.Ctx) error   {
+
+	data := new(models.Api_body)
+	time.Sleep(1*time.Second)
+
+	if err := c.BodyParser(data); err != nil {
+		return c.Status(400).JSON(err.Error())
+	}
+
+
+
+	return c.Status(200).JSON(data)
 }

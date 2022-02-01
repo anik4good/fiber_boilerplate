@@ -38,8 +38,8 @@ func main() {
 	// go log.Fatal(app.Listen(":3000"))
 	 go app.Listen("127.0.0.1:3000")
 	//UserSeed()
-	sendToQueue()
-	//for {
+	//sendToQueue()
+	for {
 	//	//var q models.Queue
 	//
 	//	//newRecords := checkForNewRecords()
@@ -93,7 +93,7 @@ func main() {
 	//
 		time.Sleep(2 * time.Second)
 		fmt.Println("No data found")
-	//}
+	}
 }
 
 // func processEmail(queue models.Queue) {

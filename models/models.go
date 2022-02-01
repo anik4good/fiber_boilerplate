@@ -7,6 +7,15 @@ type Config struct {
 	DB_PORT     string `yaml:"DB_PORT"`
 	DB_NAME     string `yaml:"DB_NAME"`
 }
+
+
+type Api_body struct {
+
+
+	Apikey   string  `json:"api_key"`
+}
+
+
 type User struct {
 	ID     int
 	Name   string
