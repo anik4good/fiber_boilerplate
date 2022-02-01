@@ -13,9 +13,12 @@ type Api_body struct {
 
 
 	Apikey   string  `json:"api_key"`
+	Senderid string  `json:"sender_id"`
+	Contacts   string  `json:"contacts"`
+	MessageType   string  `json:"type"`
+	Message   string  `json:"msg"`
+
 }
-
-
 type User struct {
 	ID     int
 	Name   string

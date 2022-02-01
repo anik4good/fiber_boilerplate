@@ -7,7 +7,7 @@ import (
 	"log"
 	//"strings"
 	"time"
-
+	gonanoid "github.com/matoous/go-nanoid"
 	Configuration "github.com/anik4good/fiber_boilerplate/config"
 	"github.com/anik4good/fiber_boilerplate/models"
 	"github.com/gofiber/fiber/v2"
@@ -65,5 +65,12 @@ func SmsApi(c *fiber.Ctx) error   {
 
 
 
-	return c.Status(200).JSON(data)
+	//Validation
+	if len(data.Apikey) ==0  || len(data.MessageType) == 0 || len(data.Contacts) ==0 || len(data.Message) ==0 || len(data.Senderid) ==0{
+		return c.Status(400).JSON("data cannot be empty")
+	}
+
+
+	id, _ := gonanoid.Nanoid(13)
+	return c.Status(200).JSON("Your SMS is Submitted. ID: "+data.Senderid+"_"+id)
 }
