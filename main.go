@@ -37,60 +37,63 @@ func main() {
 
 	// go log.Fatal(app.Listen(":3000"))
 	 go app.Listen("127.0.0.1:3000")
-	// UserSeed()
-	// sendToQueue()
-	for {
-		//var q models.Queue
-
-		newRecords := checkForNewRecords()
-
-		for _, data := range newRecords {
-			log.Println(data.Name)
-
-		}
-
-
-		log.Println(int(newRecords.RowsAffected))
-
-		if int(newRecords.RowsAffected) > 0 {
-			// wg.Add(int(num))
-			// for _, queue := range newRecords {
-			// 	log.Println("Hello world")
-
-			// }
-
-			for i := 0; i < int(newRecords.RowsAffected); i++ {
-				log.Println("Hello world")
-
-			}
-
-			// wg.Wait()
-		}
-
-		// for int(newRecords.RowsAffected) {
-
-		// log.Println("Hello world")
-
-		// 	var q models.Queue
-
-		// 	err := newRecords.Scan(&q.ID, &q.Name, &q.Email)
-		// 	if err != nil {
-		// 		logger.Println("Error writting new records to queued sms struct", err)
-		// 		continue
-		// 	}
-
-		// 	//		changeStatusToPending(q.ID)
-
-		// 	//	go processEmail(q)
-		// 	logger.Println("Status change for id ", q.ID)
-
-		// 	fmt.Println("Status change for id ", q.ID)
-
-		// }
-
+	//UserSeed()
+	sendToQueue()
+	//for {
+	//	//var q models.Queue
+	//
+	//	//newRecords := checkForNewRecords()
+	//	queue := []models.Queue{}
+	//	result:= Configuration.GormDBConn.Where("status = ?", 0).Limit(10).Find(&queue)
+	//	log.Println(int(result.RowsAffected))
+	//
+	//	for _, q := range queue {
+	//				//go processEmail(queue)
+	//			//logger.Println("Status change for id ", q.ID)
+	//
+	//			fmt.Println("Status change for id ", q.ID)
+	//
+	//	}
+	//
+	//	//if int(result.RowsAffected) > 0 {
+	//	//	// wg.Add(int(num))
+	//	//	// for _, queue := range newRecords {
+	//	//	// 	log.Println("Hello world")
+	//	//
+	//	//	// }
+	//	//
+	//	//	for i := 0; i < int(result.RowsAffected); i++ {
+	//	//		log.Println("Hello world")
+	//	//
+	//	//	}
+	//	//
+	//	//	// wg.Wait()
+	//	//}
+	//
+	//	// for int(newRecords.RowsAffected) {
+	//
+	//	// log.Println("Hello world")
+	//
+	//	// 	var q models.Queue
+	//
+	//	// 	err := newRecords.Scan(&q.ID, &q.Name, &q.Email)
+	//	// 	if err != nil {
+	//	// 		logger.Println("Error writting new records to queued sms struct", err)
+	//	// 		continue
+	//	// 	}
+	//
+	//	// 	//		changeStatusToPending(q.ID)
+	//
+	//	// 	//	go processEmail(q)
+	//	// 	logger.Println("Status change for id ", q.ID)
+	//
+	//	// 	fmt.Println("Status change for id ", q.ID)
+	//
+	//	// }
+	//
 		time.Sleep(2 * time.Second)
 		fmt.Println("No data found")
-	}
+	//}
 }
 
 // func processEmail(queue models.Queue) {
@@ -119,38 +122,45 @@ func checkForNewRecords() *gorm.DB {
 	// if err != nil {
 	// 	logger.Println("Error on new records checking ..", err)
 	// }
-	result := Configuration.GormDBConn.Where("status = ?", 0).Limit(10).Find(&users)
+	result:= Configuration.GormDBConn.Where("status = ?", 0).Limit(10).Find(&users)
 
 	return result
 }
 
-// func sendToQueue() {
-// 	// rows, err := database.Query("select id, name, email from users WHERE status = 0 LIMIT 10")
-// 	// queue := new(models.Queue)
-// 	// users := new(models.User)
+func sendToQueue() {
+	// rows, err := database.Query("select id, name, email from users WHERE status = 0 LIMIT 10")
+	// queue := new(models.Queue)
+	// users := new(models.User)
 
-// 	users := []models.User{}
-// 	// result := Configuration.GormDBConn.Raw("select id, name, email from users WHERE status = 0 LIMIT 100").Scan(&queue)
-// 	result := Configuration.GormDBConn.Where("status = ?", 0).Find(&users)
-// 	// if err != nil {
-// 	// 	logger.Println("Error on new records checking ..", err)
-// 	// }
+	users := []models.User{}
+	var queue models.Queue
+	// result := Configuration.GormDBConn.Raw("select id, name, email from users WHERE status = 0 LIMIT 100").Scan(&queue)
+	result:= Configuration.GormDBConn.Where("status = ?", 0).Limit(10).Find(&users)
+	log.Println(int(result.RowsAffected))
+	// if err != nil {
+	// 	logger.Println("Error on new records checking ..", err)
+	// }
 
-// 	// user := User{Name: "Jinzhu", Age: 18, Birthday: time.Now()}
+	// user := User{Name: "Jinzhu", Age: 18, Birthday: time.Now()}
 
-// 	// Configuration.GormDBConn.Create(queue)
+	//Configuration.GormDBConn.Create(queues)
 
-// 	// if err != nil {
-// 	// 	logger.Println("Error on new records checking ..", err)
-// 	// }
-// 	// for _, user := range rows {
-// 	// 	queue.ID=user.ID // 1,2,3
-// 	//   }
+	// if err != nil {
+	// 	logger.Println("Error on new records checking ..", err)
+	// }
+	for _, rows := range users {
+		queue.ID = rows.ID
+		queue.Name = rows.Name
+		queue.Email = rows.Email
+		queue.Status = rows.Status
 
-// 	// return result.RowsAffected
-// 	log.Println(result)
+		Configuration.GormDBConn.Create(&queue)
+	  }
 
-// }
+	// return result.RowsAffected
+	//log.Println(result)
+
+}
 
 // func changeStatusToPending(id int) {
 // 	_, err := database.Exec("UPDATE queues SET status = ? WHERE id = ?", 2, id)
