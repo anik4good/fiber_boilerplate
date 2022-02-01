@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/anik4good/fiber_boilerplate/util"
+	"github.com/bxcodec/faker/v3"
 	"log"
 
 	//"strings"
@@ -56,6 +57,20 @@ func AddUser(c *fiber.Ctx) error {
 	return c.Status(200).JSON(user)
 }
 
+
+//AddBook
+func AddUserRandom(c *fiber.Ctx) error {
+	user := new(models.User)
+
+	//user.ID = 0
+	user.Name = faker.Name()
+	user.Email = faker.Email()
+	user.Status = 0
+	Configuration.GormDBConn.Create(&user)
+	log.Println("Random User Created successfully")
+	return c.Status(200).JSON(user)
+}
+
 func SmsApi(c *fiber.Ctx) error   {
 
 	data := new(models.Api_body)
@@ -84,8 +99,12 @@ func SmsApi(c *fiber.Ctx) error   {
 	}
 
 	id, _ := gonanoid.Nanoid(13)
+	response:= "Your SMS is Submitted. ID: "+data.Senderid+"_"+id
+	log.Println(response)
 
-	return c.Status(200).JSON("Your SMS is Submitted. ID: "+data.Senderid+"_"+id)
+	return c.Status(200).JSON(response)
+
+
 }
 
 

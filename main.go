@@ -12,7 +12,7 @@ import (
 	Route "github.com/anik4good/fiber_boilerplate/routes"
 	"github.com/anik4good/fiber_boilerplate/models"
 	"github.com/bxcodec/faker/v3"
-	"gorm.io/gorm"
+	//"gorm.io/gorm"
 )
 
 var database *sql.DB
@@ -38,22 +38,30 @@ func main() {
 	// go log.Fatal(app.Listen(":3000"))
 	 go app.Listen("127.0.0.1:3000")
 	//UserSeed()
-	//sendToQueue()
+
 	for {
+		sendToQueue()
 	//	//var q models.Queue
 	//
 	//	//newRecords := checkForNewRecords()
-	//	queue := []models.Queue{}
-	//	result:= Configuration.GormDBConn.Where("status = ?", 0).Limit(10).Find(&queue)
-	//	log.Println(int(result.RowsAffected))
-	//
-	//	for _, q := range queue {
-	//				//go processEmail(queue)
-	//			//logger.Println("Status change for id ", q.ID)
-	//
-	//			fmt.Println("Status change for id ", q.ID)
-	//
-	//	}
+		queue := []models.Queue{}
+		result:= Configuration.GormDBConn.Where("status = ?", 0).Limit(1).Last(&queue)
+		if result.RowsAffected == 0 {
+			//fmt.Println("No data found on Queue table")
+		}
+
+		//log.Println(int(result.RowsAffected))
+
+
+			if int(result.RowsAffected) > 0 {
+		for _, q := range queue {
+					//go processEmail(queue)
+				//logger.Println("Status change for id ", q.ID)
+				fmt.Println("Queued Data: ", q.Name)
+				q.Status = 2
+			Configuration.GormDBConn.Updates(&q)
+		}
+			}
 	//
 	//	//if int(result.RowsAffected) > 0 {
 	//	//	// wg.Add(int(num))
@@ -92,8 +100,14 @@ func main() {
 	//	// }
 	//
 		time.Sleep(2 * time.Second)
-		fmt.Println("No data found")
+		fmt.Println(">")
 	}
+
+
+
+
+
+
 }
 
 // func processEmail(queue models.Queue) {
@@ -116,16 +130,16 @@ func main() {
 // 	return nil
 // }
 
-func checkForNewRecords() *gorm.DB {
-	users := []models.User{}
-	// rows, err := database.Query("select id, name, email from queues WHERE status = 0 LIMIT 10")
-	// if err != nil {
-	// 	logger.Println("Error on new records checking ..", err)
-	// }
-	result:= Configuration.GormDBConn.Where("status = ?", 0).Limit(10).Find(&users)
-
-	return result
-}
+//func checkForNewRecords() *gorm.DB {
+//	users := []models.User{}
+//	// rows, err := database.Query("select id, name, email from queues WHERE status = 0 LIMIT 10")
+//	// if err != nil {
+//	// 	logger.Println("Error on new records checking ..", err)
+//	// }
+//	result:= Configuration.GormDBConn.Where("status = ?", 0).Limit(1).Last(&users)
+//
+//	return result
+//}
 
 func sendToQueue() {
 	// rows, err := database.Query("select id, name, email from users WHERE status = 0 LIMIT 10")
@@ -135,11 +149,11 @@ func sendToQueue() {
 	users := []models.User{}
 	var queue models.Queue
 	// result := Configuration.GormDBConn.Raw("select id, name, email from users WHERE status = 0 LIMIT 100").Scan(&queue)
-	result:= Configuration.GormDBConn.Where("status = ?", 0).Limit(10).Find(&users)
-	log.Println(int(result.RowsAffected))
-	// if err != nil {
-	// 	logger.Println("Error on new records checking ..", err)
-	// }
+	result:=Configuration.GormDBConn.Where("status = ?", 0).Last(&users)
+	//log.Println(int(result.RowsAffected))
+	if result.Error != nil {
+		//fmt.Println("No data found on User table")
+	}
 
 	// user := User{Name: "Jinzhu", Age: 18, Birthday: time.Now()}
 
@@ -155,12 +169,15 @@ func sendToQueue() {
 		queue.Status = rows.Status
 
 		Configuration.GormDBConn.Create(&queue)
-	  }
 
-	// return result.RowsAffected
-	//log.Println(result)
+		rows.Status = 2
 
+		Configuration.GormDBConn.Updates(&rows)
+		// return result.RowsAffected
+		//log.Println(result)
+	}
 }
+
 
 // func changeStatusToPending(id int) {
 // 	_, err := database.Exec("UPDATE queues SET status = ? WHERE id = ?", 2, id)

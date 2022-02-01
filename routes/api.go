@@ -15,6 +15,7 @@ func SetUpRoutes(app *fiber.App) {
 
 	users.Get("/hello", Controller.Hello)
 	users.Post("/create", Controller.AddUser)
+	users.Post("/create-random", Controller.AddUserRandom)
 	// app.Get("/allbooks", Controller.AllBooks)
 	// app.Get("/book/:id", Controller.GetBook)
 	// app.Post("/book", Controller.AddBook)

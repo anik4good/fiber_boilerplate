@@ -1,6 +1,7 @@
 package config
 
 import (
+	"gorm.io/gorm/logger"
 	"io/ioutil"
 	"log"
 	"os"
@@ -88,8 +89,10 @@ func InitDatabaseMysqlGorm() {
 		To fully support UTF-8 encoding, you need to change charset=utf8 to charset=utf8mb4. See this article for a detailed explanation
 	*/
 
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
-
+	//db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		Logger: logger.Default.LogMode(logger.Silent),
+	})
 	if err != nil {
 		log.Fatal("Failed to connect to database. \n", err)
 		os.Exit(2)
